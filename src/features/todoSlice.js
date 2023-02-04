@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     todos: [],
-    searchTodos: [],
+    searchTerm: "",
     selected: {},
 };
 
@@ -30,16 +30,12 @@ export const todoSlice = createSlice({
         },
         updateTodo: (state, action) => {
             const { id, title } = action.payload;
-            const findTodo = state.todos.find((todo) => todo.id === id);
-            if (findTodo) {
-                findTodo.title = title;
-            }
+            const index = state.todos.findIndex((todo) => todo.id === id);
+            state.todos[index].title = title;
             state.selected = {};
         },
         searchTodo: (state, action) => {
-            state.todos = state.searchTodos.filter((todo) =>
-                todo.title.includes(action.payload)
-            );
+            state.searchTerm = action.payload;
         },
     },
 });

@@ -74,9 +74,14 @@ html, body {
 
 .todo-add {
   margin-top: 2rem;
+  border-top: 1px solid #eee;
 }
 
 .todo-content {
   height: 320px;
   overflow-y: auto;
+}
+
+.selected {
+  color: red !important;
 }

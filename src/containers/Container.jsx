@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import { Button } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import TodoList from "./TodoList/TodoList";
@@ -13,9 +13,18 @@ import { addTodo, updateTodo, searchTodo } from "../features/todoSlice";
 const Container = () => {
     const [search, setSearch] = useState("");
     const [title, setTitle] = useState("");
+    const taskInput = useRef(null);
     const typingTimeoutRef = useRef(null);
     const dispatch = useDispatch();
-    const { todos } = useSelector((state) => state.todo);
+    const todos = useSelector((state) => {
+        if (state.todo.searchTerm) {
+            return state.todo.todos.filter((todo) =>
+                todo.title.includes(state.todo.searchTerm)
+            );
+        }
+
+        return state.todo.todos;
+    });
     const { selected } = useSelector((state) => state.todo);
 
     const handleAddTodo = (e) => {
@@ -53,20 +62,24 @@ const Container = () => {
     };
 
     useEffect(() => {
-        setTitle(selected.title);
+        if (selected) {
+            taskInput.current.focus();
+            setTitle(selected.title);
+        }
     }, [selected]);
 
     return (
         <div className="container">
             <h1 className="title">Todo App</h1>
             <Paper>
-                <form action="" className="todo-search-form">
+                <div className="todo-search-form">
                     <InputBase
                         sx={{ ml: 1, flex: 1 }}
                         placeholder="Search by name..."
                         name="search"
                         value={search}
                         onChange={handleSearch}
+                        disabled={selected.id ? true : false}
                     />
                     <IconButton
                         type="button"
@@ -75,19 +88,21 @@ const Container = () => {
                     >
                         <SearchIcon />
                     </IconButton>
-                </form>
+                </div>
             </Paper>
             <div style={{ marginTop: "1rem" }} className="todo-content">
-                <TodoList todos={todos} />
+                <TodoList todos={todos} taskInput={taskInput} />
             </div>
             <div className="todo-add">
-                <form action="" className="todo-add-form">
+                <div className="todo-add-form">
                     <TextField
                         id="title"
                         label="Add new task"
                         name="title"
                         value={title}
+                        inputRef={taskInput}
                         onChange={(e) => setTitle(e.target.value)}
+                        className={`${selected ? "selected" : ""}`}
                     />
                     <Button
                         variant="contained"
@@ -98,7 +113,7 @@ const Container = () => {
                     >
                         {selected.id ? "Edit Task" : "Add Task"}
                     </Button>
-                </form>
+                </div>
             </div>
         </div>
     );

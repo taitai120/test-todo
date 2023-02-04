@@ -8,8 +8,6 @@ import TextField from "@mui/material/TextField";
 
 const TodoList = ({ todos }) => {
     const dispatch = useDispatch();
-    const [title, setTitle] = useState("");
-    const { selected } = useSelector((state) => state.todo);
 
     const renderList = (arr) => {
         return arr?.map((item) => (
