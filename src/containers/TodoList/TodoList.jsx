@@ -1,29 +1,33 @@
 import React, { useState, useEffect } from "react";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import SaveIcon from "@mui/icons-material/Save";
 import { removeTodo, selectTodo } from "../../features/todoSlice";
 import { useDispatch, useSelector } from "react-redux";
-import TextField from "@mui/material/TextField";
+import { getTodos, deleteTodo } from "../../features/todoSlice";
 
 const TodoList = ({ todos }) => {
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        dispatch(getTodos());
+    }, [dispatch]);
+
     const renderList = (arr) => {
         return arr?.map((item) => (
-            <li key={item.id} className="todo-item">
+            <li key={item._id} className="todo-item">
                 <p>{item.title}</p>
                 <div className="todo-action">
                     <EditIcon
                         className="action-icon"
                         color="primary"
-                        onClick={() => dispatch(selectTodo(item.id))}
+                        onClick={() => dispatch(selectTodo(item._id))}
                     />
                     <DeleteIcon
                         className="action-icon"
                         sx={{ color: "#d1485f" }}
                         onClick={() => {
-                            dispatch(removeTodo(item.id));
+                            dispatch(deleteTodo(item._id));
+                            console.log("Deleted");
                         }}
                     />
                 </div>

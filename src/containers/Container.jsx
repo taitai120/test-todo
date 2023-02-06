@@ -8,7 +8,8 @@ import IconButton from "@mui/material/IconButton";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { useDispatch, useSelector } from "react-redux";
-import { addTodo, updateTodo, searchTodo } from "../features/todoSlice";
+import { updateTodo, searchTodo } from "../features/todoSlice";
+import { createTodo } from "../features/todoSlice";
 
 const Container = () => {
     const [search, setSearch] = useState("");
@@ -19,7 +20,9 @@ const Container = () => {
     const todos = useSelector((state) => {
         if (state.todo.searchTerm) {
             return state.todo.todos.filter((todo) =>
-                todo.title.includes(state.todo.searchTerm)
+                todo.title
+                    .toLowerCase()
+                    .includes(state.todo.searchTerm.toLowerCase())
             );
         }
 
@@ -30,16 +33,20 @@ const Container = () => {
     const handleAddTodo = (e) => {
         e.preventDefault();
 
-        if (!selected.id) {
+        if (!selected._id) {
             if (title !== "" && title !== undefined) {
-                dispatch(addTodo(title));
+                dispatch(
+                    createTodo({
+                        title,
+                    })
+                );
                 setTitle("");
             }
         } else {
             if (title !== "" && title !== undefined) {
                 dispatch(
                     updateTodo({
-                        id: selected.id,
+                        _id: selected._id,
                         title,
                     })
                 );
@@ -79,7 +86,7 @@ const Container = () => {
                         name="search"
                         value={search}
                         onChange={handleSearch}
-                        disabled={selected.id ? true : false}
+                        disabled={selected._id ? true : false}
                     />
                     <IconButton
                         type="button"
@@ -111,7 +118,7 @@ const Container = () => {
                         onClick={handleAddTodo}
                         disabled={title === "" ? true : false}
                     >
-                        {selected.id ? "Edit Task" : "Add Task"}
+                        {selected._id ? "Edit Task" : "Add Task"}
                     </Button>
                 </div>
             </div>
